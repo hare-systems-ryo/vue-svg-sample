@@ -161,7 +161,7 @@ const createimg = async () => {
               class="btn btn-primary mb-2"
               @click="createimg"
             >
-              Ping化
+              PNG画像▶
             </button>
 
             <template v-for="(row, index) in state.svgItem" :key="index">
