@@ -24,7 +24,7 @@ export default defineConfig(({ command, mode }) => {
     // │ 絶対パス、または現在のワーキングディレクトリからの相対パスを指定できます。
     // │ 詳細は プロジェクトルート を参照してください。
     // └─────────────────
-    base: '/',
+    base: '/vue-svg-sample/',
     // ◆root
     // │ 型        : string
     // │ デフォルト: /
