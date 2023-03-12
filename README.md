@@ -4,7 +4,8 @@ Vue3.2 で SVGを扱うときのサンプル
 
 # Note
 
-詳しくば別に説明を設ける（予定）
+説明はこちらにて  
+https://qiita.com/harenokuni/items/50c951e8d7d4bd2f5671
 
 # Demo
 
