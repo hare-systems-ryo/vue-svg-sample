@@ -86,29 +86,38 @@ const pngDataUrl = ref<null | string>(null);
 /**
  * SVGからPng画像を生成する
  */
-const createimg = async () => {
+const createPngImg = async () => {
   let canvas: HTMLCanvasElement | null = null;
   let ctx: CanvasRenderingContext2D | null = null;
   try {
     pngDataUrl.value = null;
     const svgDataUrl = ToBase64(svgElement.value);
-    console.log(svgDataUrl);
-    if (svgDataUrl === null) return;
+    // console.log(svgDataUrl);
+    if (svgDataUrl === null) return null;
     const img = await ToImage(svgDataUrl);
-    console.log(img);
+    // console.log(img);
     canvas = document.createElement('canvas');
     canvas.width = 400;
     canvas.height = 400;
     ctx = canvas.getContext('2d');
-    if (img === null || ctx === null) return;
+    if (img === null || ctx === null) return null;
     ctx.drawImage(img, 0, 0);
-    pngDataUrl.value = canvas.toDataURL('image/png');
+    return canvas.toDataURL('image/png');
   } catch (error) {
     console.error(error);
+    return null;
   } finally {
     canvas = null;
     ctx = null;
   }
+};
+
+const createPngImgBtn = async () => {
+  pngDataUrl.value = await createPngImg();
+};
+
+const test = (row: SvgItemRect) => {
+  console.log('Rectタグがクリックされました', row);
 };
 </script>
 <template>
@@ -137,6 +146,7 @@ const createimg = async () => {
                       :rx="row.rx"
                       :ry="row.ry"
                       :fill="row.fill"
+                      @click="test(row)"
                     />
                   </template>
                   <template v-if="row.type === 'text'">
@@ -156,106 +166,112 @@ const createimg = async () => {
           </div>
           <div class="col-4">
             <div class="">SVGの要素</div>
+
             <button
               type="button"
               class="btn btn-primary mb-2"
-              @click="createimg"
+              @click="createPngImgBtn"
             >
               PNG画像▶
             </button>
 
-            <template v-for="(row, index) in state.svgItem" :key="index">
-              <div class="item">
-                <div class="title">Rectangle {{ index + 1 }}</div>
-              </div>
-              <template v-if="row.type === 'rect'">
-                <label class="form-label">x :{{ row.x }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.x"
-                />
-                <label class="form-label">y :{{ row.y }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.y"
-                />
-                <label class="form-label">width :{{ row.width }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.width"
-                />
-                <label class="form-label">height :{{ row.height }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.height"
-                />
-                <label class="form-label">rx :{{ row.rx }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="50"
-                  v-model="row.rx"
-                />
-                <label class="form-label">ry :{{ row.ry }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="50"
-                  v-model="row.ry"
-                />
-                <label class="form-label">fill :{{ row.fill }}</label>
-                <input
-                  type="color"
-                  class="form-control form-control-color"
-                  id="exampleColorInput"
-                  v-model="row.fill"
-                  title="Choose your color"
-                />
-              </template>
+            <div class="controler">
+              <div class="">SVGの要素</div>
+              <template v-for="(row, index) in state.svgItem" :key="index">
+                <div class="item">
+                  <div class="title">Rectangle {{ index + 1 }}</div>
+                </div>
+                <template v-if="row.type === 'rect'">
+                  <label class="form-label">x :{{ row.x }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.x"
+                  />
+                  <label class="form-label">y :{{ row.y }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.y"
+                  />
+                  <label class="form-label">width :{{ row.width }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.width"
+                  />
+                  <label class="form-label">height :{{ row.height }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.height"
+                  />
+                  <label class="form-label">rx :{{ row.rx }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="50"
+                    v-model="row.rx"
+                  />
+                  <label class="form-label">ry :{{ row.ry }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="50"
+                    v-model="row.ry"
+                  />
+                  <label class="form-label">fill :{{ row.fill }}</label>
+                  <input
+                    type="color"
+                    class="form-control form-control-color"
+                    id="exampleColorInput"
+                    v-model="row.fill"
+                    title="Choose your color"
+                  />
+                </template>
 
-              <template v-if="row.type === 'text'">
-                <label class="form-label">x :{{ row.x }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.x"
-                />
-                <label class="form-label">y :{{ row.y }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.y"
-                />
-                <label class="form-label">Font Size :{{ row.fontSize }}</label>
-                <input
-                  type="range"
-                  class="form-range"
-                  min="0"
-                  max="400"
-                  v-model="row.fontSize"
-                />
-                <label class="form-label">text </label>
-                <input type="text" class="form-control" v-model="row.text" />
+                <template v-if="row.type === 'text'">
+                  <label class="form-label">x :{{ row.x }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.x"
+                  />
+                  <label class="form-label">y :{{ row.y }}</label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.y"
+                  />
+                  <label class="form-label"
+                    >Font Size :{{ row.fontSize }}</label
+                  >
+                  <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    max="400"
+                    v-model="row.fontSize"
+                  />
+                  <label class="form-label">text </label>
+                  <input type="text" class="form-control" v-model="row.text" />
+                </template>
               </template>
-            </template>
+            </div>
           </div>
           <div class="col-4">
             <div class="">Png画像</div>
@@ -289,5 +305,10 @@ svg {
 }
 .item:not(:last-child) {
   margin-top: 20px;
+}
+
+.controler {
+  max-height: 400px;
+  overflow: auto;
 }
 </style>
